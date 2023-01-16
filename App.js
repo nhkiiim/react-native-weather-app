@@ -1,14 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
 import * as Location from 'expo-location';
+import React, { useState, useEffect } from "react";
+import {
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+    Dimensions,
+    ActivityIndicator
+} from "react-native";
 
+//무료 API KEY & 학습용이므로 그대로 등록
+const API_KEY = "cd3216bf1af637ae6ba0dc759d5ba816";
 const { width:SCREEN_WIDTH } = Dimensions.get("window");
 
 export default function App() {
     const [city, setCity] = useState("Loading..^0^")
-    const [location, setLocation] = useState();
+    const [days, setDays] = useState([]);
     const [ok, setOk] = useState(true);
-    const ask = async () => {
+
+    const getWeather = async () => {
        const {granted} = await Location.requestForegroundPermissionsAsync();
 
        if(!granted) {
@@ -18,12 +28,14 @@ export default function App() {
        const {coords:{latitude, longitude}} = await Location.getCurrentPositionAsync({accuracy:5});
        const location = await Location.reverseGeocodeAsync({latitude, longitude}, {useGoogleMaps: false});
 
-       console.log(location[0].city);
        setCity(location[0].city);
+       const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric`)
+       const json = await response.json();
+       // setDays(json.daily);
     }
 
     useEffect(() => {
-        ask();
+        getWeather();
     }, []);
 
   return (
@@ -37,22 +49,16 @@ export default function App() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.weather}
         >
+           { days.length === 0 ? (
             <View style={styles.day}>
-                <Text style={styles.temp}>27</Text>
-                <Text style={styles.description}>Sunny</Text>
+                <ActivityIndicator color="white" size="large"/>
             </View>
-           <View style={styles.day}>
-                <Text style={styles.temp}>27</Text>
-                <Text style={styles.description}>Sunny</Text>
-           </View>
-           <View style={styles.day}>
-                <Text style={styles.temp}>27</Text>
-                <Text style={styles.description}>Sunny</Text>
-           </View>
-           <View style={styles.day}>
-                <Text style={styles.temp}>27</Text>
-                <Text style={styles.description}>Sunny</Text>
-           </View>
+           ) : (
+            <View style={styles.day}>
+            <Text style={styles.temp}>27</Text>
+            <Text style={styles.description}>Sunny</Text>
+            </View>
+           )}
         </ScrollView>
       </View>
   );
