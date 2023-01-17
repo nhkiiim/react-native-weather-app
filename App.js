@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 //무료 API KEY & 학습용이므로 그대로 등록
-const API_KEY = "cd3216bf1af637ae6ba0dc759d5ba816";
+const API_KEY = "784ab24ff2ed5d94d4288abed9e25d13";
 const { width:SCREEN_WIDTH } = Dimensions.get("window");
 
 export default function App() {
@@ -31,7 +31,7 @@ export default function App() {
        setCity(location[0].city);
        const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric`)
        const json = await response.json();
-       // setDays(json.daily);
+       setDays(json.daily);
     }
 
     useEffect(() => {
@@ -54,10 +54,12 @@ export default function App() {
                 <ActivityIndicator color="white" size="large"/>
             </View>
            ) : (
-            <View style={styles.day}>
-            <Text style={styles.temp}>27</Text>
-            <Text style={styles.description}>Sunny</Text>
-            </View>
+            days.map((day, index) =>
+                <View key={index} style={styles.day}>
+                    <Text style={styles.temp}>{day.temp.day}</Text>
+                    <Text style={styles.description}>{day.weather[0].main}</Text>
+                </View>
+            )
            )}
         </ScrollView>
       </View>
@@ -66,7 +68,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-     flex: 1, 
+     flex: 1,
      backgroundColor: "gold",
   },
   city: {
