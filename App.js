@@ -56,8 +56,9 @@ export default function App() {
            ) : (
             days.map((day, index) =>
                 <View key={index} style={styles.day}>
-                    <Text style={styles.temp}>{day.temp.day}</Text>
+                    <Text style={styles.temp}>{parseFloat(day.temp.day).toFixed(1)}</Text>
                     <Text style={styles.description}>{day.weather[0].main}</Text>
+                    <Text style={styles.tinyText}>{day.weather[0].description}</Text>
                 </View>
             )
            )}
@@ -93,7 +94,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   description: {
-    marginTop: -10,
-    fontSize: 40,
+    marginTop: -5,
+    fontSize: 60,
+    fontWeight: "500",
+  },
+  tinyText: {
+    fontSize: 18,
   }
 });
